@@ -10,8 +10,6 @@ typedef struct _nodo
 
 //-----------Inicializacion de funciones----------
 
-int menu();
-
 Tnodo *CreateNodo(int dato);
 
 void InsertNodo(Tnodo *raiz, int dato);
@@ -19,12 +17,15 @@ void InsertNodo(Tnodo *raiz, int dato);
 void PostOrden(Tnodo *raiz);
 void Inorden(Tnodo *raiz);
 void PreOrden(Tnodo *raiz);
+int ContarHojas(Tnodo *raiz);
+int AlturaArbol(Tnodo *raiz);
+
 
 //-------------Funcion principal------------------
 
 int main()
 {
-    int datos[8] = {81, 3, 1, 20, 5, 10, 7, 4};
+    int datos[8] = {10, 3, 1, 20, 5, 2, 7, 4};
     Tnodo *raiz = CreateNodo(datos[0]);
     int i;
 
@@ -36,6 +37,11 @@ int main()
     Inorden(raiz);
     printf("\n\nPostOrden\n\n");
     PostOrden(raiz);
+    int hojas = ContarHojas(raiz);
+    printf("\n\nHOJAS DEL ARBOL: %d \n\n", hojas);
+
+    int altura = AlturaArbol(raiz);
+    printf("\n\nALTURA DEL ARBOL: %d \n\n", altura);
 }
 
 //------------Funciones----------------------------
@@ -95,4 +101,20 @@ void PreOrden(Tnodo *raiz)
         printf("%d", raiz->dato);
         Inorden(raiz->nodoD);
     }
+}
+
+int ContarHojas(Tnodo *raiz)
+{
+    if (raiz == NULL)
+        return 0;
+    if (raiz->nodoI == NULL && raiz->nodoD == NULL)
+        return 1;
+
+    return ContarHojas(raiz->nodoI) + ContarHojas(raiz->nodoD);
+}
+
+int AlturaArbol(Tnodo *raiz)
+{
+
+
 }
