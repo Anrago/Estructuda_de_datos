@@ -19,8 +19,10 @@ void Inorden(Tnodo *raiz);
 void PreOrden(Tnodo *raiz);
 int ContarHojas(Tnodo *raiz);
 int AlturaArbol(Tnodo *raiz);
-
-
+int contarNodos(Tnodo *raiz);
+int ArbolComp(Tnodo *raiz, int x, int cantN);
+int esCompleto(Tnodo *raiz);
+int arbolLleno(Tnodo *raiz);
 //-------------Funcion principal------------------
 
 int main()
@@ -39,9 +41,18 @@ int main()
     PostOrden(raiz);
     int hojas = ContarHojas(raiz);
     printf("\n\nHOJAS DEL ARBOL: %d \n\n", hojas);
-
     int altura = AlturaArbol(raiz);
     printf("\n\nALTURA DEL ARBOL: %d \n\n", altura);
+
+    if (arbolLleno(raiz) == 1)
+        printf("EL ARBOL ES LLENO");
+    else
+        printf("EL ARBOL NO ES LLENO\n");
+
+    if (esCompleto(raiz) == 1)
+        printf("EL ARBOL ES COMPLETO");
+    else
+        printf("EL ARBOL NO ES COMPLETO");
 }
 
 //------------Funciones----------------------------
@@ -115,6 +126,51 @@ int ContarHojas(Tnodo *raiz)
 
 int AlturaArbol(Tnodo *raiz)
 {
+    int act = 0, izq = 0, der = 0;
+    if (raiz == NULL)
+        return 0;
+    else
+    {
+        izq = AlturaArbol(raiz->nodoI);
+        der = AlturaArbol(raiz->nodoD);
+        if (izq > der)
+            act = 1 + izq;
+        else
+            act = 1 + der;
+        return act;
+    }
+}
 
+int contarNodos(Tnodo *raiz)
+{
+    if (raiz == NULL)
+        return 0;
+    else
+        return 1 + contarNodos(raiz->nodoI) + contarNodos(raiz->nodoD);
+}
 
+int ArbolComp(Tnodo *raiz, int x, int cantN)
+{
+    if (raiz == NULL)
+        return 1;
+    if (x >= cantN)
+        return 0;
+    return ArbolComp(raiz->nodoI, 2 * x + 1, cantN) &&
+           ArbolComp(raiz->nodoD, 2 * x + 2, cantN);
+}
+
+int esCompleto(Tnodo *raiz)
+{
+    int nodos = contarNodos(raiz);
+    return ArbolComp(raiz, 0, nodos);
+}
+
+int arbolLleno(Tnodo *raiz)
+{
+    if (raiz == NULL)
+        return 1;
+
+    if (raiz->nodoI == NULL || raiz->nodoD == NULL)
+        return 0;
+    return arbolLleno(raiz->nodoI) && arbolLleno(raiz->nodoD);
 }
