@@ -1,3 +1,7 @@
+//Antonio Ramos Gonzalez
+//372576
+//Practica: Colas
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -24,12 +28,13 @@ typedef struct _cola
 //Declaracion de funciones
 Tnodo *CreateNodo(Tval *datos);
 Tval Front(Tcola *cola);
+int Size(Tcola *cola);
+int PrintMenu();
 void DestroyNodo(Tnodo *nodo);
 void Enqueue(Tcola *cola, Tval *datos);
 void Dequeue(Tcola *cola);
 void IsEmpy(Tcola *cola);
 void Clear(Tcola *cola);
-int PrintMenu();
 
 
 
@@ -70,6 +75,12 @@ int main()
             IsEmpy(cola);
             break;
         case 5:
+            printf("TAMANIO DE LA COLA: ");
+            int tmp=Size(cola);
+            printf("%d\n",tmp);
+            system("PAUSE");
+            break;
+        case 6:
             printf("VACIAR COLA\n");
             Clear(cola);
             break;
@@ -80,6 +91,7 @@ int main()
     } while (opc != 0);
 }
 
+//Crea nodo
 Tnodo *CreateNodo(Tval *datos)
 {
     Tnodo *nodo = (Tnodo *)malloc(sizeof(Tnodo));
@@ -91,11 +103,13 @@ Tnodo *CreateNodo(Tval *datos)
     return nodo;
 }
 
+//Libera la memoria del nodo
 void DestroyNodo(Tnodo *nodo)
 {
     free(nodo);
 }
 
+//Ingresa elemntos al final de la cola
 void Enqueue(Tcola *cola, Tval *datos)
 {
     Tnodo *nodo = CreateNodo(datos);
@@ -104,6 +118,7 @@ void Enqueue(Tcola *cola, Tval *datos)
     {
         cola->cabeza = nodo;
         cola->Ultimo = nodo;
+        cola->cantCola++;
     }
     else
     {
@@ -117,6 +132,7 @@ void Enqueue(Tcola *cola, Tval *datos)
     }
 }
 
+//Elimina elementos al frente de la cola
 void Dequeue(Tcola *cola)
 {
     Tnodo *temp;
@@ -128,15 +144,24 @@ void Dequeue(Tcola *cola)
         cola->cantCola--;
         printf("%d \n", temp->datos);
         DestroyNodo(temp);
-        system("PAUSE");
     }
+    else
+        printf("NO HAY DATOS EN LA COLA PARA ELIMINAR\n");
+    system("PAUSE");
 }
 
+//Regresa el valor al frente de la cola
 Tval Front(Tcola *cola)
 {
     return cola->cabeza->datos;
 }
 
+int Size(Tcola *cola)
+{
+    return cola->cantCola;
+}
+
+//Verifica si la cola esta vacia
 void IsEmpy(Tcola *cola)
 {
     if(cola->cabeza != NULL)
@@ -146,12 +171,14 @@ void IsEmpy(Tcola *cola)
     system("PAUSE");
 }
 
+//Limpia la cola
 void Clear(Tcola *cola)
 {
     while (cola->cabeza != NULL)
     {
         Tnodo * temp = cola->cabeza;
         cola->cabeza=cola->cabeza->siguiente;
+        cola->cantCola--;
         DestroyNodo(temp);
     }
     cola->Ultimo = NULL;
@@ -159,6 +186,7 @@ void Clear(Tcola *cola)
     system("PAUSE");
 }
 
+//Imprime menu de opciones
 int PrintMenu()
 {
     int opc;
@@ -167,7 +195,8 @@ int PrintMenu()
     printf("2.-Eliminar\n");
     printf("3.-Obtener elemento cabeza\n");
     printf("4.-IsEmpty\n");
-    printf("5.-Vaciar cola\n");
+    printf("5.-Size\n");
+    printf("6.-Vaciar cola\n");
     printf("0.-Salir\n");
     printf("Elije una opcion: ");
     scanf("%d", &opc);

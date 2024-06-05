@@ -6,88 +6,86 @@ typedef struct _datos
 {
     int numero;
 
-}Tdatos;
+} Tdatos;
 
 typedef struct _nodo
 {
     Tdatos datos;
-    struct _nodo* siguiente;
-    
-}Tnodo;
+    struct _nodo *siguiente;
+
+} Tnodo;
 
 typedef struct _pila
 {
-    Tnodo* cabeza;
-    int cantList;
+    Tnodo *cabeza;
+    int cantPila;
 
-}Tpila;
+} Tpila;
 
-void InsertarPila(Tpila* pila, Tdatos* Datos);
-Tnodo* CrearNodo(Tdatos* Datos);
-void EliminarDePila(Tpila* pila);
-void DestruirNodo(Tnodo* nodo);
+Tnodo *CrearNodo(Tdatos *Datos);
 int menu();
-void ImprimirPila(Tpila* pila);
+void Pop(Tpila *pila);
+void IsEmpy(Tpila *pila);
+void Push(Tpila *pila, Tdatos *Datos);
+void DestruirNodo(Tnodo *nodo);
+void ImprimirPila(Tpila *pila);
+void VaciarPila(Tpila *pila);
+int Size(Tpila *pila);
 
 int main()
 {
     int opc;
-    Tdatos *num=(Tdatos*)malloc(sizeof(Tdatos));;
-    Tpila* pila=(Tpila*)malloc(sizeof(Tpila));
-    pila->cabeza=NULL;
-    pila->cantList=0;
+    Tdatos *num = (Tdatos *)malloc(sizeof(Tdatos));
+    Tpila *pila = (Tpila *)malloc(sizeof(Tpila));
+    pila->cabeza = NULL;
+    pila->cantPila = 0;
     do
     {
-        opc=menu();
+        system("CLEAR");
+        opc = menu();
+        system("CLEAR");
         switch (opc)
         {
         case 1:
             printf("Ingresa numero para agregar a pila: ");
-            scanf("%d",&num->numero);
-            InsertarPila(pila,num);
+            scanf("%d", &num->numero);
+            Push(pila, num);
             break;
-        
         case 2:
-            EliminarDePila(pila);
-            printf("Se ha eliminado un dato de la pila\n");
+            Pop(pila);
             break;
         case 3:
+            IsEmpy(pila);
+            break;
+        case 4:
+            VaciarPila(pila);
+            break;
+        case 5:
+            printf("Tamanio de pila: %d\n", Size(pila));
+            break;
+        case 6:
             ImprimirPila(pila);
             break;
-
         }
-    } while (opc!=0);
-    
-    free(num); 
+        system("PAUSE");
+    } while (opc != 0);
+
+    free(num);
     free(pila);
     return 0;
 }
 
-void InsertarPila(Tpila* pila, Tdatos* Datos)
+void Push(Tpila *pila, Tdatos *Datos)
 {
-    Tnodo* nodo = CrearNodo(Datos);
-    Tnodo* temp = pila->cabeza;
-    if (pila->cabeza == NULL)
-    {
-        pila->cabeza = nodo;
-    }
-    
-    if (temp == NULL) {
+    Tnodo *nodo = CrearNodo(Datos);
+    nodo->siguiente = pila->cabeza;
     pila->cabeza = nodo;
-    }
-    else 
-    {
-        while (temp->siguiente != NULL) {
-            temp = temp->siguiente;
-        }
-        temp->siguiente = nodo;
-    }
-  
+    pila->cantPila++;
 }
 
-Tnodo* CrearNodo(Tdatos* Datos)
+Tnodo *CrearNodo(Tdatos *Datos)
 {
-    Tnodo* nodo = (Tnodo*)malloc(sizeof(Tnodo));
+    Tnodo *nodo = (Tnodo *)malloc(sizeof(Tnodo));
     if (nodo != NULL)
     {
         nodo->datos.numero = Datos->numero;
@@ -96,61 +94,77 @@ Tnodo* CrearNodo(Tdatos* Datos)
     return nodo;
 }
 
-void DestruirNodo(Tnodo* nodo)
+void DestruirNodo(Tnodo *nodo)
 {
     free(nodo);
 }
 
-void EliminarDePila(Tpila* pila)
+void Pop(Tpila *pila)
 {
     if (pila->cabeza)
     {
-        if(pila->cabeza->siguiente)
-        {
-            Tnodo* puntero = pila->cabeza;
-            while (puntero->siguiente->siguiente)
-            {
-                puntero = puntero->siguiente;
-            }
-            Tnodo* eliminado= puntero ->siguiente;
-            puntero->siguiente=NULL;
-            DestruirNodo(eliminado);
-            pila->cantList--;
-        }
-        else
-        {
-            Tnodo* eliminado = pila->cabeza;
-            pila->cabeza=NULL;
-            DestruirNodo(eliminado);
-            pila->cantList--;
-        }
-        
+
+        Tnodo *eliminado = pila->cabeza;
+        pila->cabeza = pila->cabeza->siguiente;
+        printf("ELEMENTO ELIMINADO: %d\n", eliminado->datos);
+        DestruirNodo(eliminado);
+        pila->cantPila--;
     }
-    
+    else
+        printf("NO HAY ELEMENTOS A ELIMINAR EN LA PILA\n");
 }
 
 int menu()
 {
     int opc;
-    printf("1.-Agregar a Pila\n");
-    printf("2.-Eliminar de Pila\n");
-    printf("3.-Imprimir Pila\n");
+    printf("1.-Push\n");
+    printf("2.-Pop\n");
+    printf("3.-Is Empy\n");
+    printf("4.-Clear\n");
+    printf("5.-Size\n");
+    printf("6.-PrintPila\n");
     printf("0.-Salir\n");
     printf("Escoge una opcion: ");
-    scanf("%d",&opc);
+    scanf("%d", &opc);
     return opc;
 }
 
-void ImprimirPila(Tpila* pila)
+void ImprimirPila(Tpila *pila)
 {
-    Tnodo* temp = pila->cabeza;
-    printf("pila de empleados\n");
-    printf("Datos\n");
-    while (temp)
+    if (pila->cabeza)
     {
-        printf("%d\n",temp->datos.numero);
-        temp = temp->siguiente;
+        Tnodo *temp = pila->cabeza;
+        while (temp)
+        {
+            printf("%d\n", temp->datos.numero);
+            temp = temp->siguiente;
+        }
     }
+    else
+        printf("NO HAY ELEMENTOS A IMPRIMIR\n");
+}
 
+void IsEmpy(Tpila *pila)
+{
+    if (pila->cabeza != NULL)
+        printf("LA PILA NO ESTA VACIA\n");
+    else
+        printf("LA PILA ESTA VACIA\n");
+}
 
+void VaciarPila(Tpila *pila)
+{
+    while (pila->cabeza != NULL)
+    {
+        Tnodo *temp = pila->cabeza;
+        pila->cabeza = pila->cabeza->siguiente;
+        DestruirNodo(temp);
+        pila->cantPila--;
+    }
+    printf("PILA VACIADA CON EXITO \n");
+}
+
+int Size(Tpila *pila)
+{
+    return pila->cantPila;
 }

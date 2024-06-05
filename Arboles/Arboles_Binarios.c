@@ -1,3 +1,7 @@
+//Antonio Ramos Gonzalez
+//372576
+//Practica 4.- Arboles binarios
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -13,10 +17,13 @@ typedef struct _nodo
 Tnodo *CreateNodo(int dato);
 Tnodo *NodoMenor(Tnodo *raiz);
 Tnodo *BorrarNodo(Tnodo *raiz, int dato);
+Tnodo *BuscarNodo(Tnodo *raiz, int dato);
 void InsertNodo(Tnodo *raiz, int dato);
 void PostOrden(Tnodo *raiz);
 void Inorden(Tnodo *raiz);
 void PreOrden(Tnodo *raiz);
+void ModificarNodo(Tnodo *raiz, int datoActual, int nuevoDato);
+int PrintMenu();
 int ContarHojas(Tnodo *raiz);
 int AlturaArbol(Tnodo *raiz);
 int contarNodos(Tnodo *raiz);
@@ -24,48 +31,92 @@ int ArbolComp(Tnodo *raiz, int x, int cantN);
 int esCompleto(Tnodo *raiz);
 int arbolLleno(Tnodo *raiz);
 int arbolBalanceado(Tnodo *raiz);
-
 //--------/* condition */-----Funcion principal------------------
 
 int main()
 {
-    int datos[8] = {10, 3, 1, 20, 5, 2, 7, 4};
-    Tnodo *raiz = CreateNodo(datos[0]);
-    int i;
+    Tnodo *raiz;
+    int band = 0;
+    int opc;
+    int dato;
+    do
+    {
+        system("CLS");
+        opc = PrintMenu();
+        system("CLS");
+        switch (opc)
+        {
+        case 1:
+            printf("INGRESE DATO: ");
+            scanf("%d", &dato);
+            if (band == 0)
+            {
+                raiz = CreateNodo(dato);
+                band = 1;
+            }
+            else
+                InsertNodo(raiz, dato);
+            break;
+        case 2:
+            printf("INGRESE DATO A BUSCAR: ");
+            scanf("%d", &dato);
+            BuscarNodo(raiz, dato);
+            system("PAUSE");
+            break;
+        case 3:
+            printf("INGRESE DATO: ");
+            scanf("%d", &dato);
+            BorrarNodo(raiz, dato);
+            break;
+        case 4:
+            printf("RECORRIDOS\n");
+            printf("PreOrden\n");
+            PreOrden(raiz);
+            printf("\nInOrden\n");
+            Inorden(raiz);
+            printf("\nPostOrden\n");
+            PostOrden(raiz);
+            system("PAUSE");
+            break;
+        case 5:
+            printf("NUMERO DE NODOS EN ARBOL: %d\n", contarNodos(raiz));
+            system("PAUSE");
+            break;
+        case 6:
+            printf("EL ARBOL TIENE UNA PROFUNDIDAD DE: %d\n", AlturaArbol(raiz));
+            system("PAUSE");
+            break;
+        case 7:
+            if (esCompleto(raiz) == 1)
+                printf("EL ARBOL ES COMPLETO\n");
+            else
+                printf("EL ARBOL NO ES COMPLETO\n");
+            system("PAUSE");
+            break;
+        case 8:
+            if (arbolBalanceado(raiz) == 1)
+                printf("EL ARBOL ESTA BALANCEADO\n");
+            else
+                printf("EL ARBOL NO ESTA BALANCEADO\n");
+            system("PAUSE");
+            break;
+        case 9:
+            printf("INGRESE DATO ACTUAL: ");
+            scanf("%d", &dato);
+            int nuevoDato;
+            printf("INGRESE NUEVO DATO: ");
+            scanf("%d", &nuevoDato);
+            ModificarNodo(raiz, dato, nuevoDato);
+            system("PAUSE");
+        default:
+            break;
+        }
+    } while (opc != 0);
 
-    for (i = 1; i < 7; i++)
-        InsertNodo(raiz, datos[i]);
-    printf("PREORDEN\n\n");
-    PreOrden(raiz);
-    printf("\n\nInORDEN\n\n");
-    Inorden(raiz);
-    printf("\n\nPostOrden\n\n");
-    PostOrden(raiz);
-    int hojas = ContarHojas(raiz);
-    printf("\n\nHOJAS DEL ARBOL: %d \n\n", hojas);
-    int altura = AlturaArbol(raiz);
-    printf("\n\nALTURA DEL ARBOL: %d \n\n", altura);
-
-    // if (arbolLleno(raiz) == 1)
-    //     printf("EL ARBOL ES LLENO");
-    // else
-    //     printf("EL ARBOL NO ES LLENO\n");
-
-    // if (esCompleto(raiz) == 1)
-    //     printf("EL ARBOL ES COMPLETO");
-    // else
-    //     printf("EL ARBOL NO ES COMPLETO");
-
-    Tnodo *temp = NodoMenor(raiz);
-    printf("Nodo menor: %d\n", temp->dato);
-    Inorden(raiz);
-    printf("\n");
-    BorrarNodo(raiz, 1);
-    Inorden(raiz);
 }
 
 //------------Funciones----------------------------
-
+//Crea un nodo
 Tnodo *CreateNodo(int dato)
 {
     Tnodo *nodo = (Tnodo *)malloc(sizeof(Tnodo));
@@ -75,6 +126,7 @@ Tnodo *CreateNodo(int dato)
     return nodo;
 }
 
+//Inserta nodo en alguno de los subarboles
 void InsertNodo(Tnodo *raiz, int dato)
 {
     if (dato > raiz->dato)
@@ -93,6 +145,7 @@ void InsertNodo(Tnodo *raiz, int dato)
     }
 }
 
+//Imprime en postorden
 void PostOrden(Tnodo *raiz)
 {
     if (raiz != NULL)
@@ -102,7 +155,7 @@ void PostOrden(Tnodo *raiz)
         printf("%d", raiz->dato);
     }
 }
-
+//Imprime en inorden
 void Inorden(Tnodo *raiz)
 {
     if (raiz != NULL)
@@ -112,7 +165,7 @@ void Inorden(Tnodo *raiz)
         Inorden(raiz->nodoD);
     }
 }
-
+//Imprime en preorden
 void PreOrden(Tnodo *raiz)
 {
     if (raiz != NULL)
@@ -123,6 +176,7 @@ void PreOrden(Tnodo *raiz)
     }
 }
 
+//Cuenta las hojas del arbol
 int ContarHojas(Tnodo *raiz)
 {
     if (raiz == NULL)
@@ -133,6 +187,7 @@ int ContarHojas(Tnodo *raiz)
     return ContarHojas(raiz->nodoI) + ContarHojas(raiz->nodoD);
 }
 
+//Da la alura del arbol
 int AlturaArbol(Tnodo *raiz)
 {
     int act = 0, izq = 0, der = 0;
@@ -150,6 +205,7 @@ int AlturaArbol(Tnodo *raiz)
     }
 }
 
+//Cuenta los nodos del arbol
 int contarNodos(Tnodo *raiz)
 {
     if (raiz == NULL)
@@ -158,6 +214,7 @@ int contarNodos(Tnodo *raiz)
         return 1 + contarNodos(raiz->nodoI) + contarNodos(raiz->nodoD);
 }
 
+//Devuelve si el subarbol es completo
 int ArbolComp(Tnodo *raiz, int x, int cantN)
 {
     if (raiz == NULL)
@@ -168,12 +225,14 @@ int ArbolComp(Tnodo *raiz, int x, int cantN)
            ArbolComp(raiz->nodoD, 2 * x + 2, cantN);
 }
 
+//Devueelve si es completo
 int esCompleto(Tnodo *raiz)
 {
     int nodos = contarNodos(raiz);
     return ArbolComp(raiz, 0, nodos);
 }
 
+//Devuelve si el arbol esta lleno
 int arbolLleno(Tnodo *raiz)
 {
     if (raiz == NULL)
@@ -185,6 +244,7 @@ int arbolLleno(Tnodo *raiz)
     return arbolLleno(raiz->nodoI) && arbolLleno(raiz->nodoD);
 }
 
+//Devuelve si esta balanceado
 int arbolBalanceado(Tnodo *raiz)
 {
     if (raiz == NULL)
@@ -197,6 +257,31 @@ int arbolBalanceado(Tnodo *raiz)
     return arbolBalanceado(raiz->nodoI) && arbolBalanceado(raiz->nodoD);
 }
 
+//Nos permite modificar un nodo
+void ModificarNodo(Tnodo *raiz, int datoActual, int nuevoDato)
+{
+    if (raiz == NULL)
+    {
+        printf("Nodo no encontrado.\n");
+        return;
+    }
+
+    if (raiz->dato == datoActual)
+    {
+        raiz->dato = nuevoDato;
+        printf("Nodo modificado exitosamente.\n");
+    }
+    else if (datoActual < raiz->dato)
+    {
+        ModificarNodo(raiz->nodoI, datoActual, nuevoDato);
+    }
+    else
+    {
+        ModificarNodo(raiz->nodoD, datoActual, nuevoDato);
+    }
+}
+
+//Da el nodo menor
 Tnodo *NodoMenor(Tnodo *raiz)
 {
     while (raiz->nodoI != NULL)
@@ -205,6 +290,7 @@ Tnodo *NodoMenor(Tnodo *raiz)
     return raiz;
 }
 
+//Nos permite borrar nodo
 Tnodo *BorrarNodo(Tnodo *raiz, int dato)
 {
     if (raiz == NULL)
@@ -241,4 +327,48 @@ Tnodo *BorrarNodo(Tnodo *raiz, int dato)
         }
     }
     return raiz;
+}
+
+//Nos permite buscar nodo
+Tnodo *BuscarNodo(Tnodo *raiz, int dato)
+{
+    if (raiz == NULL)
+    {
+        printf("Nodo no encontrado.\n");
+        return NULL;
+    }
+
+    if (raiz->dato == dato)
+    {
+        printf("Nodo encontrado: %d\n", raiz->dato);
+        return raiz;
+    }
+    else if (dato < raiz->dato)
+    {
+        return BuscarNodo(raiz->nodoI, dato);
+    }
+    else
+    {
+        return BuscarNodo(raiz->nodoD, dato);
+    }
+}
+
+//Imprime menu de opciones
+int PrintMenu()
+{
+    int opc;
+    printf("MENU ARBOL\n");
+    printf("1.-Agregar a arbol\n");
+    printf("2.-Buscar en arbol\n");
+    printf("3.-Eliminar nodo\n");
+    printf("4.-Recorridos\n");
+    printf("5.-Numero de nodos\n");
+    printf("6.-Profundidad\n");
+    printf("7.-Completo\n");
+    printf("8.-Balanceado\n");
+    printf("9.-Modificar nodo\n");
+    printf("0.-Salir\n");
+    printf("Elige una opcion: ");
+    scanf("%d", &opc);
+    return opc;
 }
